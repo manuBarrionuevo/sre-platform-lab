@@ -1,0 +1,45 @@
+# Node
+app/node_modules/
+node_modules/
+npm-debug.log*
+
+# Env
+.env
+.env.*
+
+# Coverage / reports
+coverage/
+*.coverage
+junit.xml
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local tools / runners
+actions-runner/
+.github-runner/
+argocd
+kubectl
+helm
+minikube-linux-amd64
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Logs / temp
+*.log
+tmp/
+temp/
+
+# Helm artifacts
+*.tgz

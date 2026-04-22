@@ -20,7 +20,7 @@ resources:
     memory: 256Mi
 
 serviceMonitor:
-  enabled: false
+  enabled: true
   interval: 15s
 
 app:

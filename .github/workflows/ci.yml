@@ -59,7 +59,9 @@ jobs:
       - name: 🐳 Build Docker image
         run: |
           echo "::group::docker build"
-          docker build -t $IMAGE_NAME:${{ steps.vars.outputs.TAG }} .
+          docker build \
+            -t $IMAGE_NAME:${{ steps.vars.outputs.TAG }} \
+            -t $IMAGE_NAME:latest .
           echo "::endgroup::"
 
       - name: 📤 Push Docker image
@@ -67,4 +69,5 @@ jobs:
         run: |
           echo "::group::docker push"
           docker push $IMAGE_NAME:${{ steps.vars.outputs.TAG }}
+          docker push $IMAGE_NAME:latest
           echo "::endgroup::"

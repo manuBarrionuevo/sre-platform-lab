@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: platform-app
-  tag: "1.0.0"
-  pullPolicy: Never
+  repository: ghcr.io/manubarrionuevo/platform-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP

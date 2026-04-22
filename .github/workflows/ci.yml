@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
@@ -14,6 +14,7 @@ env:
 
 jobs:
   ci:
+    if: github.actor != 'github-actions[bot]'
     name: 🚀 Build, Test and Publish
     runs-on: [self-hosted, linux, x64]
 
@@ -71,3 +72,29 @@ jobs:
           docker push $IMAGE_NAME:${{ steps.vars.outputs.TAG }}
           docker push $IMAGE_NAME:latest
           echo "::endgroup::"
+
+      - name: 📝 Update Helm values
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: .
+        run: |
+          echo "::group::update values.yaml"
+          sed -i 's|repository: .*|repository: '"$IMAGE_NAME"'|' helm/platform-app/values.yaml
+          sed -i 's|tag: .*|tag: "'"${{ steps.vars.outputs.TAG }}"'"|' helm/platform-app/values.yaml
+          sed -i 's|pullPolicy: .*|pullPolicy: IfNotPresent|' helm/platform-app/values.yaml
+          cat helm/platform-app/values.yaml
+          echo "::endgroup::"
+
+      - name: 📌 Commit updated Helm values
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add helm/platform-app/values.yaml
+          git diff --cached --quiet || git commit -m "ci: update platform-app image tag to ${{ steps.vars.outputs.TAG }}"
+
+      - name: 🚀 Push updated Helm values
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: .
+        run: |
+          git push

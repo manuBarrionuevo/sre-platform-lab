@@ -23,28 +23,38 @@ resource "helm_release" "prometheus" {
     name  = "server.persistentVolume.enabled"
     value = "false"
   }
+}
+
+resource "helm_release" "grafana" {
+  name       = "grafana"
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "grafana"
+  namespace  = var.namespace
+
+  create_namespace = false
+  cleanup_on_fail  = true
+  wait             = true
+  timeout          = 600
 
   values = [
     yamlencode({
-      serverFiles = {
-        "prometheus.yml" = {
-          scrape_configs = [
+      persistence = {
+        enabled = false
+      }
+
+      adminUser     = "admin"
+      adminPassword = "admin123"
+
+      datasources = {
+        "datasources.yaml" = {
+          apiVersion = 1
+          datasources = [
             {
-              job_name = "prometheus"
-              static_configs = [
-                {
-                  targets = ["localhost:9090"]
-                }
-              ]
-            },
-            {
-              job_name = "platform-app"
-              metrics_path = "/metrics"
-              static_configs = [
-                {
-                  targets = ["platform-app.dev.svc.cluster.local:3000"]
-                }
-              ]
+              name      = "Prometheus"
+              type      = "prometheus"
+              access    = "proxy"
+              url       = "http://monitoring-prometheus-server"
+              isDefault = true
             }
           ]
         }

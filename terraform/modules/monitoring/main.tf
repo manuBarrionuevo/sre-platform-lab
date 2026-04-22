@@ -23,4 +23,32 @@ resource "helm_release" "prometheus" {
     name  = "server.persistentVolume.enabled"
     value = "false"
   }
+
+  values = [
+    yamlencode({
+      serverFiles = {
+        "prometheus.yml" = {
+          scrape_configs = [
+            {
+              job_name = "prometheus"
+              static_configs = [
+                {
+                  targets = ["localhost:9090"]
+                }
+              ]
+            },
+            {
+              job_name = "platform-app"
+              metrics_path = "/metrics"
+              static_configs = [
+                {
+                  targets = ["platform-app.dev.svc.cluster.local:3000"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    })
+  ]
 }

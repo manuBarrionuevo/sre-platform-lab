@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "platform-app.fullname" . }}
+  labels:
+    app: {{ include "platform-app.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "platform-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "platform-app.name" . }}
+    spec:
+      containers:
+        - name: {{ include "platform-app.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          env:
+            - name: PORT
+              value: "{{ .Values.containerPort }}"
+            - name: APP_ENV
+              value: "{{ .Values.app.env }}"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

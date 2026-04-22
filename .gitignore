@@ -28,7 +28,7 @@ actions-runner/
 .github-runner/
 argocd
 kubectl
-helm
+#helm
 minikube-linux-amd64
 
 # OS / editors

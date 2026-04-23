@@ -22,4 +22,17 @@ describe("Platform App", () => {
     expect(response.statusCode).toBe(201);
     expect(response.body.title).toBe("Desplegar con Argo CD");
   });
+
+  test("GET ruta inexistente responde 404", async () => {
+    const response = await request(app).get("/no-existe");
+    expect(response.statusCode).toBe(404);
+  });
+
+  test("POST /api/tasks sin title responde 400", async () => {
+    const response = await request(app)
+      .post("/api/tasks")
+      .send({});
+
+    expect(response.statusCode).toBe(400);
+  });
 });

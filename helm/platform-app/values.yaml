@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/manubarrionuevo/platform-app
-  tag: "c6a56b3"
+  tag: "957a966"
   pullPolicy: IfNotPresent
 
 service:
